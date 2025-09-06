@@ -60,7 +60,7 @@
                 const response = await fetch(API_ENDPOINT);
                 const data = await response.json();
 
-                if (response.status === 204 || !data || data.is_playing === false) {
+                if (response.status === 204 || !data || !data.is_playing) {
                     albumArt.src = 'https://via.placeholder.com/350';
                     songTitle.textContent = "Not Playing";
                     artistName.textContent = "";
