@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Spotify Now Playing</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #121212;
+            color: #fff;
+        }
+        .spotify-container {
+            text-align: center;
+        }
+        .album-art {
+            width: 350px;
+            height: 350px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        .song-title {
+            font-size: 2.5em;
+            margin: 0;
+        }
+        .artist-name {
+            font-size: 1.5em;
+            color: #b3b3b3;
+            margin: 5px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="spotify-container">
+        <a id="spotify-link" href="#" target="_blank">
+            <img id="album-art" src="https://via.placeholder.com/350" alt="Album Art" class="album-art" />
+        </a>
+        <h2 id="song-title" class="song-title">Loading...</h2>
+        <p id="artist-name" class="artist-name"></p>
+    </div>
+
+    <script>
+        const albumArt = document.getElementById('album-art');
+        const songTitle = document.getElementById('song-title');
+        const artistName = document.getElementById('artist-name');
+        const spotifyLink = document.getElementById('spotify-link');
+        
+        // This is the URL of your Vercel function
+        const API_ENDPOINT = '/api/now-playing';
+
+        const fetchNowPlaying = async () => {
+            try {
+                const response = await fetch(API_ENDPOINT);
+                const data = await response.json();
+
+                if (response.status === 204 || !data || data.is_playing === false) {
+                    albumArt.src = 'https://via.placeholder.com/350';
+                    songTitle.textContent = "Not Playing";
+                    artistName.textContent = "";
+                    spotifyLink.href = "#";
+                } else {
+                    const track = data.item;
+                    const artists = track.artists.map(artist => artist.name).join(', ');
+                    
+                    albumArt.src = track.album.images[0].url;
+                    songTitle.textContent = track.name;
+                    artistName.textContent = artists;
+                    spotifyLink.href = track.external_urls.spotify;
+                }
+            } catch (error) {
+                console.error('Error fetching now playing data:', error);
+                songTitle.textContent = "Error loading";
+                artistName.textContent = "";
+            }
+        };
+
+        fetchNowPlaying();
+        setInterval(fetchNowPlaying, 5000);
+    </script>
+</body>
+</html>
