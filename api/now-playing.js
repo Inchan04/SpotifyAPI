@@ -20,7 +20,11 @@ export default async (req, res) => {
         refresh_token: REFRESH_TOKEN,
       }),
     });
-    
+
+    if (!authResponse.ok) {
+        throw new Error(`Failed to get access token: ${authResponse.statusText}`);
+    }
+
     const authData = await authResponse.json();
     const accessToken = authData.access_token;
 
@@ -33,12 +37,17 @@ export default async (req, res) => {
     if (nowPlayingResponse.status === 204) {
       return res.status(200).json({});
     }
+    
+    if (!nowPlayingResponse.ok) {
+        throw new Error(`Failed to fetch now playing: ${nowPlayingResponse.statusText}`);
+    }
 
     const nowPlayingData = await nowPlayingResponse.json();
     return res.status(200).json(nowPlayingData);
 
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Server error' });
+    console.error('API Error:', error.message);
+    return res.status(500).json({ error: 'Server error occurred.' });
   }
 };
+
