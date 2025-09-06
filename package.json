@@ -1,0 +1,13 @@
+{
+  "name": "spotify-now-playing-api",
+  "version": "1.0.0",
+  "description": "A Vercel serverless function to fetch Spotify's now playing song.",
+  "main": "api/now-playing.js",
+  "type": "module",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "node-fetch": "^3.0.0"
+  }
+}
